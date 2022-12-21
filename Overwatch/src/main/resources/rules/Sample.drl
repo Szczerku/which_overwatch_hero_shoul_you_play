@@ -1,0 +1,475 @@
+package com.sample
+import javax.swing.*
+
+declare enum Questions
+	Que1("Your first strategy in the Hunger Games would be to...",new String[]{"lay low and forage", "kill off your competition"}),
+	Que2("Do you feel particularly nurting today?",new String[]{"yes", "meh"}),
+	Que3("Are you willing to sustain a lot of damage?",new String[]{"no", "Sure.I just want to smash stuff"}),
+	Que4("Is agility imortant for your game?",new String[]{"no", "yes"}),
+	Que5("Does everything sound better with a British accent?",new String[]{"no", "yes"}),
+	Que6("Are you tortoise or a hare?",new String[]{"hare", "tortoise"}),
+	Que7("What would you say to your daughters Prom date?",new String[]{"Have, fun!", "I've got you in my sights."}),
+	Que8("Do you want to deliver justice from the air or ground?",new String[]{"air", "ground"}),
+	Que9("Is it high noon?",new String[]{"no", "somewhere in the world"}),
+	Que10("Did you just say that to avoid getting McCree?",new String[]{"no", "yes"}),
+	Que11("Fair enough.", new String[]{"ok"}),
+	Que12("Do you want to fight at close quaters?",new String[]{"yes", "no"}),
+	Que13("Your anger style is best described as:",new String[]{"explosive", "slow burn"}),
+	Que14("Are you really good at making unrealistic grabs?",new String[]{"yes", "no"}),
+	Que15("In stressful situations do you prefer to work alone or with a team?",new String[]{"alone", "team"}),
+	Que16("Sind Sie die ultimative Brechmachine?",new String[]{"naturlich", "Is that German for Mountain Dew?"}),
+	Que17("Do you like playing the same hero every game?",new String[]{"variety is the spice of life", "its not stupid if it works"}),
+	Que18("Turret or Sniper?",new String[]{"Turret", "Sniper"}),
+	Que19("Supportive or offensive ultimate?",new String[]{"supportive", "offensive"}),
+	Que20("Do you want Play of the Game?",new String[]{"yes", "no"}),
+	Que21("Are you secretly evil with a heart of pure ice?",new String[]{"yes", "no"}),
+	Que22("Is your Hot Pocket ready and you need to go afk for 2 mins?",new String[]{"yes", "no"}),
+	Que23("Does your team have a healer?",new String[]{"yes", "no"}),
+	Que24("The true enemy is...",new String[]{"disorder", "a closed mind"}),
+	Que25("We need a healer.",new String[]{"no one switches"}),
+	Que26("Cmon",new String[]{"no one switches", "FINE!"}),
+	Que27("Do you always keep hard candies on hand?",new String[]{"yes", "no"}),
+	Que28("Pick a song.",new String[]{"I am the DJ David Bowie", "In the Arms of an Angel~Sara Mclachlan"});
+	question : String
+	answers : String[]
+end
+
+declare Answer
+	question : String
+	answer : String
+end
+
+declare Result
+		result : String
+end
+
+rule "CREATE QUESTION"
+when
+	q: Questions()
+then
+	int x = JOptionPane.showOptionDialog(null, q.getQuestion(),
+                "OVERWATCH HERO",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, q.getAnswers(), null);
+    Answer answer = new Answer(q.getQuestion(), q.getAnswers()[x]);
+    insert(answer);
+end
+
+rule "SHOW RESULT"
+when
+	r: Result()
+then
+	JOptionPane.showMessageDialog(null, r.getResult(), "Jestes:", JOptionPane.INFORMATION_MESSAGE);
+end
+	
+rule "START"
+then
+    insert(Questions.Que1);
+end
+
+
+rule "Quev1"
+when
+	Answer(question.equals("Your first strategy in the Hunger Games would be to..."), answer.equals("lay low and forage"))
+then
+	insert(Questions.Que2);
+end
+
+
+rule "Quev1-2"
+when
+	Answer(question.equals("Your first strategy in the Hunger Games would be to..."), answer.equals("kill off your competition"))
+then
+	insert(Questions.Que3);
+
+end
+
+rule "Quev2"
+when
+	Answer(question.equals("Do you feel particularly nurting today?"), answer.equals("yes"))
+then
+	insert(Questions.Que23);
+end
+
+rule "Quev2-2"
+when
+	Answer(question.equals("Do you feel particularly nurting today?"), answer.equals("meh"))
+then
+	insert(Questions.Que17);
+end
+
+rule "Quev23"
+when
+	Answer(question.equals("Does your team have a healer?"), answer.equals("yes"))
+then
+	insert(Questions.Que24);
+end
+
+rule "Quev23-2"
+when
+	Answer(question.equals("Does your team have a healer?"), answer.equals("no"))
+then
+	insert(Questions.Que25);
+end
+
+rule "Quev24"
+when
+	Answer(question.equals("The true enemy is..."), answer.equals("a closed mind"))
+then
+	Result result = new Result("ZENYATTA");
+	insert(result);
+end
+
+rule "Quev24-2"
+when
+	Answer(question.equals("The true enemy is..."), answer.equals("disorder"))
+then
+	Result result = new Result("SYMMETRA");
+	insert(result);
+end
+
+rule "Quev17"
+when
+	Answer(question.equals("Do you like playing the same hero every game?"), answer.equals("variety is the spice of life"))
+then
+	insert(Questions.Que18);
+end
+
+rule "Quev17-2"
+when
+	Answer(question.equals("Do you like playing the same hero every game?"), answer.equals("its not stupid if it works"))
+then
+	insert(Questions.Que21);
+end
+
+rule "Quev21"
+when
+	Answer(question.equals("Are you secretly evil with a heart of pure ice?"), answer.equals("yes"))
+then
+	Result result = new Result("MEI");
+	insert(result);
+end
+
+rule "Quev21-2"
+when
+	Answer(question.equals("Are you secretly evil with a heart of pure ice?"), answer.equals("no"))
+then
+	Result result = new Result("JUNKRAT");
+	insert(result);
+end
+
+rule "Quev25"
+when
+	Answer(question.equals("We need a healer."), answer.equals("no one switches"))
+then
+	insert(Questions.Que26);
+end
+
+rule "Quev26"
+when
+	Answer(question.equals("Cmon"), answer.equals("no one switches"))
+then
+	update(Questions.Que25);
+end
+
+rule "Quev26-2"
+when
+	Answer(question.equals("Cmon"), answer.equals("FINE!"))
+then
+	insert(Questions.Que27);
+end
+
+rule "Quev27"
+when
+	Answer(question.equals("Do you always keep hard candies on hand?"), answer.equals("yes"))
+then
+	Result result = new Result("ANA");
+	insert(result);
+end
+
+rule "Quev27-2"
+when
+	Answer(question.equals("Do you always keep hard candies on hand?"), answer.equals("no"))
+then
+	insert(Questions.Que28);
+end
+
+rule "Quev28"
+when
+	Answer(question.equals("Pick a song."), answer.equals("I am the DJ David Bowie"))
+then
+	Result result = new Result("LUCIO");
+	insert(result);
+end
+
+rule "Quev28-2"
+when
+	Answer(question.equals("Pick a song."), answer.equals("In the Arms of an Angel~Sara Mclachlan"))
+then
+	Result result = new Result("MERCY");
+	insert(result);
+end
+
+rule "Quev18"
+when
+	Answer(question.equals("Turret or Sniper?"), answer.equals("Sniper"))
+then
+	insert(Questions.Que19);
+end
+
+rule "Quev18-2"
+when
+	Answer(question.equals("Turret or Sniper?"), answer.equals("Turret"))
+then
+	insert(Questions.Que20);
+end
+
+rule "Quev19"
+when
+	Answer(question.equals("Supportive or offensive ultimate?"), answer.equals("supportive"))
+then
+	Result result = new Result("WIDOWMAKER");
+	insert(result);
+end
+
+
+rule "Quev19-2"
+when
+	Answer(question.equals("Supportive or offensive ultimate?"), answer.equals("offensive"))
+then
+	Result result = new Result("HANZO");
+	insert(result);
+end
+
+rule "Quev20"
+when
+	Answer(question.equals("Do you want Play of the Game?"), answer.equals("no"))
+then
+	Result result = new Result("Turn off the game ....");
+	insert(result);
+end
+
+rule "Quev20-2"
+when
+	Answer(question.equals("Do you want Play of the Game?"), answer.equals("yes"))
+then
+	insert(Questions.Que22);
+end
+
+rule "Quev22"
+when
+	Answer(question.equals("Is your Hot Pocket ready and you need to go afk for 2 mins?"), answer.equals("yes"))
+then
+	Result result = new Result("TORBJORN");
+	insert(result);
+end
+
+rule "Quev22-2"
+when
+	Answer(question.equals("Is your Hot Pocket ready and you need to go afk for 2 mins?"), answer.equals("no"))
+then
+	Result result = new Result("BASTION");
+	insert(result);
+end
+//do zrobienia galaz que6
+rule "Quev3"
+when
+	Answer(question.equals("Are you willing to sustain a lot of damage?"), answer.equals("no"))
+then
+	insert(Questions.Que6);
+end
+
+rule "Quev3-2"
+when
+	Answer(question.equals("Are you willing to sustain a lot of damage?"), answer.equals("Sure.I just want to smash stuff"))
+then
+	insert(Questions.Que12);
+end
+
+rule "Quev12"
+when
+	Answer(question.equals("Do you want to fight at close quaters?"), answer.equals("yes"))
+then
+	insert(Questions.Que13);
+end
+
+rule "Quev12-2"
+when
+	Answer(question.equals("Do you want to fight at close quaters?"), answer.equals("no"))
+then
+	insert(Questions.Que13);
+end
+
+rule "Quev15"
+when
+	Answer(question.equals("In stressful situations do you prefer to work alone or with a team?"), answer.equals("alone"))
+then
+	Result result = new Result("ZARYA");
+	insert(result);
+end
+
+rule "Quev15-2"
+when
+	Answer(question.equals("In stressful situations do you prefer to work alone or with a team?"), answer.equals("team"))
+then
+	Result result = new Result("ORISA");
+	insert(result);
+end
+
+rule "Quev13"
+when
+	Answer(question.equals("Your anger style is best described as:"), answer.equals("slow burn"))
+then
+	insert(Questions.Que14);
+end
+
+rule "Quev13-2"
+when
+	Answer(question.equals("Your anger style is best described as:"), answer.equals("explosive"))
+then
+	Result result = new Result("WINSTON");
+	insert(result);
+end
+
+rule "Quev14"
+when
+	Answer(question.equals("Are you really good at making unrealistic grabs?"), answer.equals("yes"))
+then
+	Result result = new Result("ROADHOG");
+	insert(result);
+end
+
+rule "Quev14-2"
+when
+	Answer(question.equals("Are you really good at making unrealistic grabs?"), answer.equals("no"))
+then
+	insert(Questions.Que16);
+end
+
+rule "Quev16"
+when
+	Answer(question.equals("Sind Sie die ultimative Brechmachine?"), answer.equals("naturlich"))
+then
+	Result result = new Result("REINHAROT");
+	insert(result);
+end
+
+rule "Quev16-2"
+when
+	Answer(question.equals("Sind Sie die ultimative Brechmachine?"), answer.equals("Is that German for Mountain Dew?"))
+then
+	Result result = new Result("D.VA");
+	insert(result);
+end
+
+rule "Quev6"
+when
+	Answer(question.equals("Are you tortoise or a hare?"), answer.equals("tortoise"))
+then
+	insert(Questions.Que8);
+end
+
+rule "Quev6-2"
+when
+	Answer(question.equals("Are you tortoise or a hare?"), answer.equals("hare"))
+then
+	insert(Questions.Que4);
+end
+
+rule "Quev4"
+when
+	Answer(question.equals("Is agility imortant for your game?"), answer.equals("yes"))
+then
+	insert(Questions.Que5);
+end
+
+rule "Quev4-2"
+when
+	Answer(question.equals("Is agility imortant for your game?"), answer.equals("no"))
+then
+	insert(Questions.Que7);
+end
+
+rule "Quev7"
+when
+	Answer(question.equals("What would you say to your daughters Prom date?"), answer.equals("Have, fun!"))
+then
+	Result result = new Result("GENJI");
+	insert(result);
+end
+
+rule "Quev7-2"
+when
+	Answer(question.equals("What would you say to your daughters Prom date?"), answer.equals("I've got you in my sights."))
+then
+	Result result = new Result("SOLDIER:76");
+	insert(result);
+end
+
+rule "Quev5"
+when
+	Answer(question.equals("Does everything sound better with a British accent?"), answer.equals("yes"))
+then
+	Result result = new Result("TRACER");
+	insert(result);
+end
+
+rule "Quev5-2"
+when
+	Answer(question.equals("Does everything sound better with a British accent?"), answer.equals("no"))
+then
+	Result result = new Result("SOMBRA");
+	insert(result);
+end
+
+rule "Quev8"
+when
+	Answer(question.equals("Do you want to deliver justice from the air or ground?"), answer.equals("air"))
+then
+	Result result = new Result("PHARAH");
+	insert(result);
+end
+
+rule "Quev8-2"
+when
+	Answer(question.equals("Do you want to deliver justice from the air or ground?"), answer.equals("ground"))
+then
+	insert(Questions.Que9);
+end
+
+rule "Quev9"
+when
+	Answer(question.equals("Is it high noon?"), answer.equals("no"))
+then
+	insert(Questions.Que10);
+end
+
+rule "Quev99-2"
+when
+	Answer(question.equals("Is it high noon?"), answer.equals("somewhere in the world"))
+then
+	Result result = new Result("McCREE");
+	insert(result);
+end
+
+rule "Quev10"
+when
+	Answer(question.equals("Did you just say that to avoid getting McCree?"), answer.equals("no"))
+then
+	Result result = new Result("McCREE");
+	insert(result);
+end
+
+rule "Quev10-2"
+when
+	Answer(question.equals("Did you just say that to avoid getting McCree?"), answer.equals("yes"))
+then
+	insert(Questions.Que11);
+end
+
+rule "Quev11"
+when
+	Answer(question.equals("Fair enough."), answer.equals("ok"))
+then
+	Result result = new Result("REAPER");
+	insert(result);
+end
