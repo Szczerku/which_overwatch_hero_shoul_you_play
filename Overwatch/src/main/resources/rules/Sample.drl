@@ -54,7 +54,7 @@ then
     insert(answer);
 end
 
-rule "SHOW RESULT"
+rule "SHOW OVERWATCH HERO"
 when
 	r: Result()
 then
